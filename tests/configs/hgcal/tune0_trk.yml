@@ -1,0 +1,172 @@
+# HGCAL TRACKSTER processing setup
+# 
+# General comments:
+#
+# - Keep the minibatch size small enough, otherwise weak convergence to optima with some models
+# - Other imputation methods than 'constant' not natively compatible with re-weighting (-> biased)
+
+rootname: 'hgcal_trk'
+rngseed: 123456                      # Fixed seed for training data mixing
+
+# ----------------------------------------------------
+mva_param: &MVA_INPUT_PARAM
+  use_conditional: false             # Conditional (theory parametric) input
+  num_classes: 2                     # Number of classes in MVA
+  signalclass: 1                     # Signal class ID
+    
+  inputvar_scalar:  'MVA_SCALAR_VARS' # 'MVA_SCALAR_VARS' # Input variables, implemented under mvavars.py
+  #inputvar_jagged:  null              # 'MVA_JAGGED_VARS'
+  #jagged_maxdim:    6
+  
+  varnorm: null                      # Variable normalization: 'zscore', 'madscore', null
+  #varnorm_tensor: 'zscore'          # Tensor variable normalization
+  #varnorm_graph: null               # Not implemented yet
+  
+  # Graph object construction
+  graph_param:
+    thresh:     0.1                  # CLUE3D Reco-to-Sim matching threshold
+    self_loops: True                 # Often good for GNN-message passing (but rememb. that in evaluation, can increase AUC artificially ~ within self-loop fraction of all edges)
+    directed:   False
+  #  global_on: False                # Not active
+  #  coord: 'pxpypze'                # NA
+  
+  # # ** Image tensor object construction **
+  # image_param:
+
+  #   # See the corresponding construction under common.py
+  #   channels: 2                 # 1,2,...
+
+  #   # bin-edges
+  #   eta_bins: []
+  #   phi_bins: []
+
+  frac: 0.9                           # Train vs validate/test split fraction
+  
+  # Imputation
+  imputation_param:
+    active: false                     # True / False
+    var: 'MVA_SCALAR_VARS'            # Array of variables to be imputated
+    algorithm: 'constant'             # Algorithm type: 'constant', iterative' (vector), knn' (vector), 'mean' (scalar), 'median' (scalar)
+    fill_value: 0                     # For constant imputation
+    knn_k: 8                          # Number of nearest neighbours considered
+    values: null                      # Special values which indicate the need for imputation, if null, then only Inf/Nan
+
+
+# ----------------------------------------------------
+genesis_runmode:
+
+  <<: *MVA_INPUT_PARAM
+
+  maxevents:  null
+  inputmap: null
+
+  #input:
+  #  class_1:
+  #    'single_electron/*.root'
+  #  class_0:
+  #    'single_pion/*.root'
+  #
+  #tree_name: 'ticlNtuplizer/candidates'
+
+  targetfunc: null                    # Training target,    implemented under mctargets.py
+  filterfunc: 'filter_nofilter'       # Training filtering, implemented under mcfilter.py
+  cutfunc:    'cut_nocut'             # Basic cuts,         implemented under cuts.py
+
+  xcorr_flow: True                    # Full N-point correlations computed between cuts
+  pickle_size: 1000                  # Number of entries (events) per pickle file
+
+
+# ----------------------------------------------------
+train_runmode:
+
+  <<: *MVA_INPUT_PARAM
+
+  maxevents: null
+  
+  input_tag: null
+  model_tag: null
+
+  ## Reweighting setup
+  reweight: false
+  reweight_param: &REWEIGHT_PARAM
+
+    maxevents: 100000              # Maximum number of events for the PDF construction
+    equal_frac: true               # Equalize integrated class fractions
+    differential: false            # Differential reweighting
+    # ---------------------
+    
+    reference_class: 0             # Reference class: 0 = (background), 1 = (signal), 2 = (another class) ..., 
+    
+    # dimension: 'pseudo-2D'         # '2D', 'pseudo-2D', '1D'
+    # pseudo_type: 'product'         # 'product', 'geometric_mean'
+    
+    # var_A: 'x_hlt_pt'
+    # var_B: 'x_hlt_eta'
+
+    # bins_A:  [0.001, 100.0, 150]   # Make sure the bounds cover the phase space
+    # binmode_A:  'linear'           # 'log10' or 'linear' binning
+    
+    # bins_B: [-3.1, 3.1, 150]
+    # binmode_B: 'linear'
+    
+    # # ! Variable, and binning min/max boundaries are both transformed !
+    # transform_A: 'log10'           # 'log10', 'sqrt', 'square', null
+    # transform_B: null
+
+    # max_reg: 10000.0               # Maximum weight cut-off regularization
+
+
+  ## Outlier protection in the training
+  outlier_param:
+    algo: null         # algorithm: 'truncate', null
+    qmin: 0.01         # in [0,100] 
+    qmax: 99.9         # in [0,100]
+
+
+  # ** Activate models here **
+  # Give all models some unique identifier and label
+  models:  !include configs/hgcal/models_trk.yml
+  active_models: &ACTIVE_MODELS
+    - gnet0
+    - gnet1
+    - gnet2
+  
+  raytune: !include configs/hgcal/raytune.yml
+  
+  # Distillation training
+  # -- the order must be compatible with the causal order in 'active_models'
+  distillation:
+
+    # Big, sophisticated model
+    source:
+      #xgb0
+      
+    # Simple, compressed models
+    drains:
+      #- xgb1
+      # - add more here
+  
+  # Batched "deep" training
+  batch_train_param:
+    blocksize: 150000   # Maximum number of events simultaneously in RAM
+    epochs: 50          # Number of global epochs (1 epoch = one iteration over the full input dataset), same for all models
+    #num_cpu: null      # Set null for auto, or an integer for manual.
+
+# ----------------------------------------------------
+eval_runmode:
+  
+  <<: *MVA_INPUT_PARAM
+  
+  maxevents: null
+
+  input_tag: null
+  model_tag: null
+
+  reweight: false
+  reweight_param: *REWEIGHT_PARAM
+
+  models:  !include configs/hgcal/models_trk.yml
+  active_models: *ACTIVE_MODELS
+
+# ----------------------------------------------------
+plot_param: !include configs/hgcal/plots_trk.yml

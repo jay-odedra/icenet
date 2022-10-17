@@ -1,0 +1,92 @@
+# B/RK analyzer config file (PROTO)
+#
+# -----------------------------------------------------------------------------
+# General
+
+rootname: 'brk'
+rngseed: 123456                 # Fixed seed for training data mixing
+
+
+input_param: &INPUT_PARAM
+
+  # Maximum number of triplets as an input to the neural network
+  MAXT3: 6
+
+  # Maximum number of simultaneous "hot" objects considered with 0 < MAXN <= MAXT3
+  # Note! Exponential complexity growth
+  MAXN:  1
+
+  # Create supersets (combine triplets with identical kinematics)
+  SUPERSETS: true
+  
+  # Normalization
+  WNORM: 'event'
+  
+  # -----------------------------------------------------------------------------
+  # WNORM: event-by-event weight normalization:
+  #
+  #   'event' gives ~ #active-elements^{-1} normalized weights,
+  #           e.g class c3 = [1 0 0 1 0 0 0] (two hot objects) receives
+  #           weight \hat{P}(c_3) / 2 filled two times by two different kinematics
+  #
+  #   'unit'  gives weights normalized by one, the relative weight
+  #           per output c_i depends on the object multiplicity of the class
+  # -----------------------------------------------------------------------------
+
+
+mva_param: &MVA_INPUT_PARAM
+  
+  num_classes: null         # Num of classes in MVA
+  signalclass: null
+
+  inputvar:    null
+  cutfunc:     null
+  targetfunc:  null
+
+  frac: 0.9                 # Train vs validate/test split fraction
+  
+  varnorm: 'zscore'         # variable normalization: 'zscore', 'minmax', 'none'
+
+
+# ----------------------------------------------------
+genesis_runmode:
+  <<: *INPUT_PARAM
+  <<: *MVA_INPUT_PARAM
+  
+  inputmap: null
+  maxevents: 1000
+  
+  VERBOSE: false
+
+  # Input imputation (NOT IMPLEMENTED)
+  # ...
+
+
+# ----------------------------------------------------
+train_runmode:
+  <<: *INPUT_PARAM
+  <<: *MVA_INPUT_PARAM
+
+  models:  !include configs/brk/models.yml
+  active_models: &ACTIVE_MODELS
+    - xgb
+    - maxo
+    - deps
+
+  ## Outlier protection in the training phase
+  outlier_param:
+    algo: 'truncate' # algorithm: 'truncate', 'none'
+    qmin:  0.001     # in [0,100] 
+    qmax: 99.99      # in [0,100]
+
+
+# ----------------------------------------------------
+eval_runmode:
+  <<: *INPUT_PARAM
+  <<: *MVA_INPUT_PARAM
+
+  active_models: *ACTIVE_MODELS
+
+
+# ----------------------------------------------------
+plot_param: null

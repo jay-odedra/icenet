@@ -1,8 +1,8 @@
-# Electron HLT trigger tune0.yml
+# HNL tune0.yml
 #
 # -------------------------------------------------------------------
 
-rootname: 'trg'
+rootname: 'hnl'
 rngseed: 123456                       # Fixed seed for training data mixing
 
 # ----------------------------------------------------
@@ -15,18 +15,18 @@ mva_param: &MVA_INPUT_PARAM
   #inputvar_jagged:  null              # 'MVA_JAGGED_VARS'
   #jagged_maxdim:    6
   
-  varnorm: 'zscore'                   # Variable normalization: 'zscore', 'madscore', null
+  varnorm: null                       # Variable normalization: 'zscore', 'madscore', null
   #varnorm_tensor: 'zscore'           # Tensor variable normalization
   #varnorm_graph: null                # Not implemented yet
   
-  frac: 0.7                           # Train vs validate/test split fraction
+  frac: 0.9                           # Train vs validate/test split fraction
   
   # Imputation
   imputation_param:
     active: true                      # True / False
     var: 'MVA_SCALAR_VARS'            # Array of variables to be imputated
     algorithm: 'constant'             # Algorithm type: 'constant', iterative' (vector), knn' (vector), 'mean' (scalar), 'median' (scalar)
-    fill_value: -999.0                # For constant imputation
+    fill_value: 0                     # For constant imputation
     knn_k: 8                          # Number of nearest neighbours considered
     values: null                      # Special values which indicate the need for imputation, if null, then only Inf/Nan
   
@@ -52,10 +52,10 @@ mva_param: &MVA_INPUT_PARAM
 genesis_runmode:
 
   maxevents:  null
-  inputmap: null #"mc_input.yml"
+  inputmap:   null #"mc_input.yml"
 
-  mcfile:     'eff.root'
-  datafile:   'datadist.root'
+  mcfile:     'bdt_df_2016.pkl'
+  datafile:   null
   tree_name:  null                    # 'ntuplizer/tree'
 
   targetfunc: null                    # Training target,    implemented under mctargets.py
@@ -63,7 +63,7 @@ genesis_runmode:
   cutfunc:    'cut_fiducial'          # Basic cuts,         implemented under cuts.py
 
   xcorr_flow: True                    # Full N-point correlations computed between cuts
-  pickle_size: 1000                  # Number of entries (events) per pickle file
+  pickle_size: 1000                   # Number of entries (events) per pickle file
 
 
 # ----------------------------------------------------
@@ -82,7 +82,7 @@ train_runmode:
 
     maxevents: 100000             # Maximum number of events for the PDF construction
     equal_frac: true              # Equalize integrated class fractions
-    differential: true            # Differential reweighting
+    differential: false           # Differential reweighting
     # ---------------------
     
     reference_class: 0            # Reference class: 0 = (background), 1 = (signal), 2 = (another class) ..., 
@@ -90,7 +90,7 @@ train_runmode:
     # MC has much longer tail over pt. Thus, it is not possible to re-weight background
     # to signal very easily, but it is possible to re-weight signal to background.
     # This is seen by inspecting the re-weighted distributions with small and large statistics.
-
+    
     dimension: 'pseudo-2D'         # '2D', 'pseudo-2D', '1D'
     pseudo_type: 'product'         # 'product', 'geometric_mean'
     
@@ -118,25 +118,25 @@ train_runmode:
 
   # ** Activate models here **
   # Give all models some unique identifier and label
-  models:  !include configs/trg/models.yml
+  models:  !include configs/hnl/models.yml
   active_models: &ACTIVE_MODELS
     
+    #- xgb-MI-max
+    #- dmlp-MI-max
+
+    - xgb-MI-min
+    - dmlp-MI-min
+    
     - xgb0
-    #- dmlp0
+    - dmlp0
     
-    #- xgb1
+    - xgb0-red
+    - dmlp0-red
     
-    #- cut0
-    #- cut1
-    #- cut2
-    #- cut3
-    #- cut4
-    #- cut5
-    #- cut6
+    - cut0
+    - cut1
 
-    #- cutset0
-
-  raytune: !include configs/trg/raytune.yml
+  raytune: !include configs/hnl/raytune.yml
 
   # Distillation training
   # -- the order must be compatible with the causal order in 'active_models'
@@ -144,11 +144,11 @@ train_runmode:
 
     # Big, sophisticated model
     source:
-      xgb0
-      
+      #xgb0
+    
     # Simple, compressed models
     drains:
-      - xgb1
+      #- xgb1
       # - add more here
 
   # Batched "deep" training
@@ -170,9 +170,9 @@ eval_runmode:
   reweight: true
   reweight_param: *REWEIGHT_PARAM
 
-  models:  !include configs/trg/models.yml
+  models:  !include configs/hnl/models.yml
   active_models: *ACTIVE_MODELS
 
 # ----------------------------------------------------
-plot_param: !include configs/trg/plots.yml
+plot_param: !include configs/hnl/plots.yml
 

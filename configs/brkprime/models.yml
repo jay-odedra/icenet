@@ -24,80 +24,80 @@ MI_REG_PARAM: &MI_REG_PARAM
 
 ## MVA models
 
-cutset0:
-  train:   'cutset'
-  predict: 'cutset'
-  
-  label:   'cutset'
-  raytune:  null
-  
-  # Using yaml multiline suntax without last linebreak syntax with >-
-  # https://stackoverflow.com/questions/3790454/how-do-i-break-a-string-in-yaml-over-multiple-lines
-  cutstring: >-
-    x_hlt_pms2 < 10000 &&  
-    x_hlt_invEInvP < 0.2 &&  
-    x_hlt_trkDEtaSeed < 0.01 &&  
-    x_hlt_trkDPhi < 0.2 && 
-    x_hlt_trkChi2 < 40 && 
-    x_hlt_trkValidHits >= 5 && 
-    x_hlt_trkNrLayerIT >= 2
+#cutset0:
+#  train:   'cutset'
+#  predict: 'cutset'
+#  
+#  label:   'cutset'
+#  raytune:  null
+#  
+#  # Using yaml multiline suntax without last linebreak syntax with >-
+#  # https://stackoverflow.com/questions/3790454/how-do-i-break-a-string-in-yaml-over-multiple-lines
+#  cutstring: >-
+#    x_hlt_pms2 < 10000 &&  
+#    x_hlt_invEInvP < 0.2 &&  
+#    x_hlt_trkDEtaSeed < 0.01 &&  
+#    x_hlt_trkDPhi < 0.2 && 
+#    x_hlt_trkChi2 < 40 && 
+#    x_hlt_trkValidHits >= 5 && 
+#    x_hlt_trkNrLayerIT >= 2
 
 
-cut0:
-  train:    'cut'
-  predict:  'cut'
-  label:    'hlt_pms2 x (-1)'
-  variable: 'x_hlt_pms2'
-  sign: -1
-  transform: null
-
-cut1:
-  train:    'cut'
-  predict:  'cut'
-  label:    'hlt_invEInvP x (-1)'
-  variable: 'x_hlt_invEInvP'
-  sign: -1
-  transform: 'tanh'
-
-cut2:
-  train:    'cut'
-  predict:  'cut'
-  label:    'hlt_trkDEtaSeed x (-1)'
-  variable: 'x_hlt_trkDEtaSeed'
-  sign: -1
-  transform: 'tanh'
-
-cut3:
-  train:    'cut'
-  predict:  'cut'
-  label:    'hlt_trkDPhi x (-1)'
-  variable: 'x_hlt_trkDPhi'
-  sign: -1
-  transform: 'tanh'
-
-cut4:
-  train:    'cut'
-  predict:  'cut'
-  label:    'hlt_trkChi2 x (-1)'
-  variable: 'x_hlt_trkChi2'
-  sign: -1
-  transform: 'tanh'
-
-cut5:
-  train:    'cut'
-  predict:  'cut'
-  label:    'hlt_trkValidHits'
-  variable: 'x_hlt_trkValidHits'
-  sign: 1
-  transform: null
-
-cut6:
-  train:    'cut'
-  predict:  'cut'
-  label:    'hlt_trkNrLayerIT'
-  variable: 'x_hlt_trkNrLayerIT'
-  sign: 1
-  transform: null
+#cut0:
+#  train:    'cut'
+#  predict:  'cut'
+#  label:    'hlt_pms2 x (-1)'
+#  variable: 'x_hlt_pms2'
+#  sign: -1
+#  transform: null
+#
+#cut1:
+#  train:    'cut'
+#  predict:  'cut'
+#  label:    'hlt_invEInvP x (-1)'
+#  variable: 'x_hlt_invEInvP'
+#  sign: -1
+#  transform: 'tanh'
+#
+#cut2:
+#  train:    'cut'
+#  predict:  'cut'
+#  label:    'hlt_trkDEtaSeed x (-1)'
+#  variable: 'x_hlt_trkDEtaSeed'
+#  sign: -1
+#  transform: 'tanh'
+#
+#cut3:
+#  train:    'cut'
+#  predict:  'cut'
+#  label:    'hlt_trkDPhi x (-1)'
+#  variable: 'x_hlt_trkDPhi'
+#  sign: -1
+#  transform: 'tanh'
+#
+#cut4:
+#  train:    'cut'
+#  predict:  'cut'
+#  label:    'hlt_trkChi2 x (-1)'
+#  variable: 'x_hlt_trkChi2'
+#  sign: -1
+#  transform: 'tanh'
+#
+#cut5:
+#  train:    'cut'
+#  predict:  'cut'
+#  label:    'hlt_trkValidHits'
+#  variable: 'x_hlt_trkValidHits'
+#  sign: 1
+#  transform: null
+#
+#cut6:
+#  train:    'cut'
+#  predict:  'cut'
+#  label:    'hlt_trkNrLayerIT'
+#  variable: 'x_hlt_trkNrLayerIT'
+#  sign: 1
+#  transform: null
 
 
 # XGBoost

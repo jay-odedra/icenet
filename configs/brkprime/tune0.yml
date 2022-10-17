@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------------
 
-rootname: 'trg'
+rootname: 'brkprime'
 rngseed: 123456                       # Fixed seed for training data mixing
 
 # ----------------------------------------------------
@@ -54,13 +54,13 @@ genesis_runmode:
   maxevents:  null
   inputmap: null #"mc_input.yml"
 
-  mcfile:     'eff.root'
-  datafile:   'datadist.root'
+  mcfile:     'ntuple_2022Oct12_BuToKJpsi_Toee.root'
+  datafile:   'ntuple_2022Oct12_Run2022Dv2_part1.root'
   tree_name:  null                    # 'ntuplizer/tree'
 
   targetfunc: null                    # Training target,    implemented under mctargets.py
-  filterfunc: 'filter_standard'       # Training filtering, implemented under mcfilter.py
-  cutfunc:    'cut_fiducial'          # Basic cuts,         implemented under cuts.py
+  filterfunc: 'filter_nofilter'       # Training filtering, implemented under mcfilter.py
+  cutfunc:    'cut_nocut'          # Basic cuts,         implemented under cuts.py
 
   xcorr_flow: True                    # Full N-point correlations computed between cuts
   pickle_size: 1000                  # Number of entries (events) per pickle file
@@ -94,8 +94,8 @@ train_runmode:
     dimension: 'pseudo-2D'         # '2D', 'pseudo-2D', '1D'
     pseudo_type: 'product'         # 'product', 'geometric_mean'
     
-    var_A: 'x_hlt_pt'
-    var_B: 'x_hlt_eta'
+    var_A: 'x_reco_pt'
+    var_B: 'x_reco_eta'
 
     bins_A:  [0.001, 100.0, 150]   # Make sure the bounds cover the phase space
     binmode_A:  'linear'           # 'log10' or 'linear' binning
@@ -118,7 +118,7 @@ train_runmode:
 
   # ** Activate models here **
   # Give all models some unique identifier and label
-  models:  !include configs/trg/models.yml
+  models:  !include configs/brkprime/models.yml
   active_models: &ACTIVE_MODELS
     
     - xgb0
@@ -136,7 +136,7 @@ train_runmode:
 
     #- cutset0
 
-  raytune: !include configs/trg/raytune.yml
+  raytune: !include configs/brkprime/raytune.yml
 
   # Distillation training
   # -- the order must be compatible with the causal order in 'active_models'
@@ -170,9 +170,9 @@ eval_runmode:
   reweight: true
   reweight_param: *REWEIGHT_PARAM
 
-  models:  !include configs/trg/models.yml
+  models:  !include configs/brkprime/models.yml
   active_models: *ACTIVE_MODELS
 
 # ----------------------------------------------------
-plot_param: !include configs/trg/plots.yml
+plot_param: !include configs/brkprime/plots.yml
 
