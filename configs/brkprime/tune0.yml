@@ -15,7 +15,7 @@ mva_param: &MVA_INPUT_PARAM
   #inputvar_jagged:  null              # 'MVA_JAGGED_VARS'
   #jagged_maxdim:    6
   
-  varnorm: 'zscore'                   # Variable normalization: 'zscore', 'madscore', null
+  varnorm: null                   # Variable normalization: 'zscore', 'madscore', null
   #varnorm_tensor: 'zscore'           # Tensor variable normalization
   #varnorm_graph: null                # Not implemented yet
   
@@ -54,8 +54,8 @@ genesis_runmode:
   maxevents:  null
   inputmap: null #"mc_input.yml"
 
-  mcfile:     'ntuple_2022Oct12_BuToKJpsi_Toee.root'
-  datafile:   'ntuple_2022Oct12_Run2022Dv2_part1.root'
+  mcfile:     'MCSIGNALKJPSI.root'
+  datafile:   'etahltandptreqDATAdv1.root'
   tree_name:  null                    # 'ntuplizer/tree'
 
   targetfunc: null                    # Training target,    implemented under mctargets.py
@@ -80,7 +80,7 @@ train_runmode:
   reweight: true
   reweight_param: &REWEIGHT_PARAM
 
-    maxevents: 100000             # Maximum number of events for the PDF construction
+    maxevents: 1000000             # Maximum number of events for the PDF construction
     equal_frac: true              # Equalize integrated class fractions
     differential: true            # Differential reweighting
     # ---------------------
@@ -94,8 +94,8 @@ train_runmode:
     dimension: 'pseudo-2D'         # '2D', 'pseudo-2D', '1D'
     pseudo_type: 'product'         # 'product', 'geometric_mean'
     
-    var_A: 'x_reco_pt'
-    var_B: 'x_reco_eta'
+    var_A: 'e1_reco_pt'
+    var_B: 'e1_reco_eta'
 
     bins_A:  [0.001, 100.0, 150]   # Make sure the bounds cover the phase space
     binmode_A:  'linear'           # 'log10' or 'linear' binning
@@ -144,17 +144,17 @@ train_runmode:
 
     # Big, sophisticated model
     source:
-      xgb0
+      #xgb0
       
     # Simple, compressed models
     drains:
-      - xgb1
+      #- xgb1
       # - add more here
 
   # Batched "deep" training
   batch_train_param:
-    blocksize: 150000   # Maximum number of events simultaneously in RAM
-    epochs: 50          # Number of global epochs (1 epoch = one iteration over the full input dataset), same for all models
+    #blocksize: 150000   # Maximum number of events simultaneously in RAM
+    #epochs: 50          # Number of global epochs (1 epoch = one iteration over the full input dataset), same for all models
     #num_cpu: null      # Set null for auto, or an integer for manual.
 
 # ----------------------------------------------------

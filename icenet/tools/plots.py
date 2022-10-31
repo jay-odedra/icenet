@@ -12,6 +12,7 @@ import os
 import gc
 from pprint import pprint
 import copy
+from scipy import interpolate
 
 from tqdm import tqdm
 
@@ -864,7 +865,7 @@ def ROC_plot(metrics, labels, title = '', filename = 'ROC', legend_fontsize=7, x
         fig,ax = plt.subplots()
         xx     = np.logspace(-5, 0, 100)
         plt.plot(xx, xx, linestyle='--', color='black', linewidth=1) # ROC diagonal
-
+    
         for i in range(len(metrics)):
 
             if         i < 10:
@@ -915,7 +916,8 @@ def ROC_plot(metrics, labels, title = '', filename = 'ROC', legend_fontsize=7, x
             """
 
             ## Plot it
-            plt.plot(fpr, tpr, drawstyle='steps-mid', color=f'C{i}', linestyle=linestyle, marker=marker, label = f'{labels[i]}: AUC = {metrics[i].auc:.3f}')
+
+            plt.plot(fpr, tpr, drawstyle='steps-mid', color=f'C{i}', linestyle=linestyle, marker=marker, label = f'{labels[i]}: AUC = {metrics[i].auc:.5f}')
             
             # Uncertainty band
             if marker == 'None' and (metrics[i].tpr_bootstrap is not None):
@@ -930,8 +932,8 @@ def ROC_plot(metrics, labels, title = '', filename = 'ROC', legend_fontsize=7, x
 
         ax.set_xlabel('False Positive Rate $\\alpha$ (background efficiency)')
         ax.set_ylabel('True Positive Rate $1-\\beta$ (signal efficiency)')
-        ax.set_title(title, fontsize=10)
-
+        #ax.set_title(title, fontsize=10)
+        ax.set_title('2022 MC signal Data sideband background ROC curve', fontsize=10)    
         if k == 0: # Linear-Linear
 
             if len(metrics) > 12:
@@ -952,6 +954,7 @@ def ROC_plot(metrics, labels, title = '', filename = 'ROC', legend_fontsize=7, x
             plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=legend_fontsize)
 
             plt.ylim(0.0, 1.0)
+            plt.yticks(np.arange(0, 1.0, 0.05))
             plt.xlim(xmin, 1.0)
             plt.locator_params(axis="x", nbins=int(-np.log10(xmin) + 1))
             plt.locator_params(axis="y", nbins=11)
