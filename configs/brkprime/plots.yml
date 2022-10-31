@@ -16,18 +16,18 @@ ROC:
 
 ## Binned ROC plots can be 1D or 2D
 ROC_binned:
-  active: true
+  active: false
   num_bootstrap: 200
   xmin: 1.0E-6
   
   plot[0]:
     var:   ['e1_reco_pt']
-    edges: [11.0, 12.0, 13.0, 14.0, 10000]
+    edges: [7.0, 12.0, 1000]
 
   plot[1]:
     var:   ['e1_reco_pt', 'e1_reco_eta']
-    edges: [[11.0, 13.0, 15.0, 17.0, 10000],
-          [11.0, 13.0, 15.0, 17.0, 10000]]
+    edges: [[7.0, 12.0, 1000],
+          [-2.0, 0.0, 2.0]]
 
 ## MVA output density (1D)
 MVA_output:

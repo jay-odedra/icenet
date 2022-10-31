@@ -64,9 +64,6 @@ NEW_VARS = [
 ]
 
 PLOT_VARS = [
-  'e1_reco_eta',
-  'e1_reco_pt',
-
 ]
 
 # Variables we read out from the root files (regular expressions supported here)

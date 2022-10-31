@@ -933,7 +933,7 @@ def ROC_plot(metrics, labels, title = '', filename = 'ROC', legend_fontsize=7, x
         ax.set_xlabel('False Positive Rate $\\alpha$ (background efficiency)')
         ax.set_ylabel('True Positive Rate $1-\\beta$ (signal efficiency)')
         #ax.set_title(title, fontsize=10)
-        ax.set_title('2022 MC signal Data sideband background ROC curve', fontsize=10)    
+        ax.set_title('2022 MC signal Data sideband background ROC curve low e1_pt_7to12_GeV', fontsize=10)    
         if k == 0: # Linear-Linear
 
             if len(metrics) > 12:
@@ -954,7 +954,6 @@ def ROC_plot(metrics, labels, title = '', filename = 'ROC', legend_fontsize=7, x
             plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=legend_fontsize)
 
             plt.ylim(0.0, 1.0)
-            plt.yticks(np.arange(0, 1.0, 0.05))
             plt.xlim(xmin, 1.0)
             plt.locator_params(axis="x", nbins=int(-np.log10(xmin) + 1))
             plt.locator_params(axis="y", nbins=11)

@@ -54,8 +54,8 @@ genesis_runmode:
   maxevents:  null
   inputmap: null #"mc_input.yml"
 
-  mcfile:     'MCSIGNALKJPSI.root'
-  datafile:   'etahltandptreqDATAdv1.root'
+  mcfile:     'MCSignal7to12_GeV.root'
+  datafile:   'DataBackgroundSideband7to12_GeV.root'
   tree_name:  null                    # 'ntuplizer/tree'
 
   targetfunc: null                    # Training target,    implemented under mctargets.py
