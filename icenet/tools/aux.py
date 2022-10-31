@@ -31,6 +31,15 @@ import icenet.tools.prints as prints
 import icenet.tools.stx as stx
 
 
+def unmask(x, mask, default_value=-1):
+    """
+    Unmasking function
+    """
+    out = default_value * np.ones(len(mask))
+    out[mask] = x
+    return out
+
+
 def cartesian_product(*arrays):
     """
     N-dimensional generalized cartesian product between arrays
@@ -82,7 +91,7 @@ def slice_range(start, stop, N):
 
 def red(X, ids, param, mode=None, exclude_tag='exclude_MVA_vars', include_tag='include_MVA_vars'):
     """
-    Reduce the input set variables of X
+    Reduce the input set variables of X (start with all include, then evaluate exclude, then evaluate include)
     
     Args:
         X:           data matrix

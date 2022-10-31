@@ -6,7 +6,7 @@
 
 CONFIG="tune0.yml"
 DATAPATH="/home/user/travis-stash/input/icedqcd"
-#DATAPATH="/vols/cms/mc3909/"
+#DATAPATH="/vols/cms/mc3909"
 CONDITIONAL=1
 
 #mkdir "figs/dqcd/config-[$CONFIG]" -p # for output ascii dump
@@ -17,6 +17,12 @@ if [ ${maxevents+x} ]; then MAX="--maxevents $maxevents"; else MAX=""; fi
 ulimit -s unlimited
 ulimit -l unlimited
 ulimit -v unlimited
+
+# Generate steering YAML for QCD
+python configs/dqcd/include/ymlgen.py --process 'QCD'        --filerange '[0-10]'
+
+# Vector
+python configs/dqcd/include/ymlgen.py --process 'vector'     --filerange '[150-2000]'
 
 # Use * or other glob wildcards for filenames
 # tee redirect output to both a file and to screen

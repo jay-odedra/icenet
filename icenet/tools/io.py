@@ -34,6 +34,21 @@ import base64
 import yaml
 
 
+def rootsafe(txt):
+    """
+    Change character due to ROOT
+    """
+    return txt.replace('-', '_').replace('+','_').replace('/','_').replace('*','_')
+
+def safetxt(txt):
+    """
+    Protection for '/'
+    """
+    if type(txt) is str:
+        return txt.replace('/', '|')
+    else:
+        return txt
+
 def count_files_in_dir(path):
     """
     Count the number of files in a path
@@ -148,7 +163,11 @@ def glob_expand_files(datasets, datapath, recursive_glob=False):
 
     if files == []:
        files = [datapath]
-   
+    
+    # Transform multiple slashes
+    for i in range(len(files)):
+        files[i] = files[i].replace('////','/').replace('///', '/').replace('//', '/')
+
     #print(__name__ + f'.glob_expand_files: Final files: {files}')
         
     return files
